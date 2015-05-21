@@ -40,7 +40,7 @@ Array.prototype.unique = function() {
     var selectedSets = [];
     
     
-    window.Powerset.colorByAttribute = setAttributeOrFirstAttribute(window.Powerset.colorByAttribute);
+    that.colorByAttribute = setAttributeOrFirstAttribute(that.colorByAttribute);
 
     $("#bodyVis").prepend("<div id='ps-control-panel' class='ps-control-panel'></div>");
 
@@ -123,7 +123,6 @@ Array.prototype.unique = function() {
 
     this.draw = function() {
       var date = new Date();
-      console.log("called draw " + date);
 
       var groupRows = getGroupRows();
 
@@ -135,10 +134,6 @@ Array.prototype.unique = function() {
       var svgWidth = parseInt(svg.attr("width"), 10);
       var svgHeight = parseInt(svg.attr("height"), 10);
       var rectsWidth = svgWidth - 30;
-
-      console.log("svgHeight",svgHeight);
-      console.log("svgWidth",svgWidth);
-
 
       /* init loop */
       var allSizes = 0;
@@ -231,7 +226,7 @@ Array.prototype.unique = function() {
 
     function getVisualStats(){
       return ctx.summaryStatisticVis.filter(function(x) {
-        if (Powerset.colorByAttribute === x.attribute) {
+        if (that.colorByAttribute === x.attribute) {
           return x;
         }
       })[0];
@@ -242,12 +237,10 @@ Array.prototype.unique = function() {
       svg.selectAll("rect.pw-set").remove();
       svg.selectAll("rect.pw-set-sel").remove();
       svg.selectAll("text.pw-set-text").remove();
-      //svg.selectAll("foreignobject.pw-set-text").remove();
       //workaround foreignObjects (foreignObject camelCase not working in webkit)
       svg.selectAll(".pw-set-text").remove();
       svg.selectAll(".pw-set-more").remove();
       svg.selectAll(".pw-set-more-text").remove();
-      //console.warn(setRects);
       setRects.each(function(d, idx) {
         drawSubset(svg, rectsWidth, this, d, idx, true);
       });
@@ -277,13 +270,11 @@ Array.prototype.unique = function() {
         });
       }
 
-
       // TODO: calc width and the sets that will be displayed and add minWdith for them.
       var setWidths = [];
       var minWidth = Powerset.minimalSetWidth;
       var lsets = subsets.length; 
       var setwidth = (gWidth - (Powerset.setPadding * (lsets - 1)) /*- (minWidth * lsets ) */) / groupSetSize;
-      console.log("calc set widths: ", gWidth, (Powerset.setPadding * (lsets - 1)), (minWidth * lsets ));
       subsets.forEach(function(set, idx) {
         var w = parseFloat((set.setSize * setwidth).toFixed(3),10);
         if(activeMoreBlock){
@@ -310,7 +301,7 @@ Array.prototype.unique = function() {
       }
 
       function funcDataMedian(d){
-        var attr = getAttributeByName(Powerset.colorByAttribute);
+        var attr = getAttributeByName(that.colorByAttribute);
         if (ctx.summaryStatisticVis.length) {
           var stats = getVisualStats();
           if(stats){
@@ -343,7 +334,7 @@ Array.prototype.unique = function() {
           var arrValues = [];
           for (var i = d.items.length - 1; i >= 0; i--) {
             var itm = d.items[i];
-            var val = getAttributeValue(Powerset.colorByAttribute, itm);
+            var val = getAttributeValue(that.colorByAttribute, itm);
             arrValues.push(val);
           }
           return baseStr+" "+baseStr+"-" + idx;
@@ -362,8 +353,6 @@ Array.prototype.unique = function() {
       }
 
       // TODO: insert <g>
-      console.info("row:",idx,subsets.length,subsets);
-
       svg.selectAll("rect.pw-set-" + idx).remove();
       var subSetRects = svg.selectAll("rect.pw-set-" + idx).data(subsets);
       subSetRects.enter().append("rect")
@@ -519,38 +508,21 @@ Array.prototype.unique = function() {
         width: "500px",
         position: { my: "right", at: "right", of: window },
         resizeStop: function(evt,ui){
-          console.log("ui",ui);
           drawModalSvg(hiddenSets,ui.size.height.toFixed(0),ui.size.width.toFixed(0));
         }
       });
       
     }
     
-    function getSelectedSets(){
-      return sets.filter(function(d){ return d.isSelected;});
-    }
-    
-    function getSelectedItems(){
+    function getSelectedItems(selItems){
       var arrselsets = selectedSets.filter(function(d){
         return d.active;
       });
-      var arr = [];
+      var arr = selItems || [];
       arrselsets.forEach(function(d){
         arr = arr.concat(d.baseSet.items);
       });
       return arr.unique();
-    }
-    
-    function getBaseSetsBySet(s){
-      var selSets = usedSets;
-      var arr = [];
-      for (var i = 0; i < s.combinedSets.length; i++) {
-        var v = s.combinedSets[i];
-        if(v === 1){
-          arr.push(selSets[i]);
-        }
-      }
-      return arr;
     }
 
     function getCountsForProgressbar(groupRows) {
@@ -609,9 +581,6 @@ Array.prototype.unique = function() {
           }
           
           var checked = selectedSets[idx].active ? "checked='checked'" : "";
-          //var arrbaseSet = getBaseSetsBySet(d) || {};
-          //var baseSet = arrbaseSet.length > 0 ? arrbaseSet[0] : {};
-          //var baseSetId = baseSet.id || "";
           
           var str = "<input type='checkbox' " + checked + " value='" + idx + "' class='chk-set-size' id='chk-set-size-" + idx + "' data-basesetid='" + d.id + "'>";
           str += "<span>" + d.elementName + "</span>";
@@ -626,11 +595,9 @@ Array.prototype.unique = function() {
         var idx = $(this).val();
         var baseSetId = $(this).data("basesetid");
         var baseSet = setIdToSet[baseSetId];
-        console.log("selected base set:", baseSet);
         console.log("change: ",selectedSets[idx].active," => ", !selectedSets[idx].active);
         selectedSets[idx].active = !selectedSets[idx].active;
         selectedSets[idx].baseSet = baseSet;
-        console.log(getSelectedItems());
         that.draw();
 
         createSelection(getSelectedItems());
@@ -676,6 +643,13 @@ Array.prototype.unique = function() {
 
     }
 
+
+    /*
+     var arrStyles = [{
+     name: ".pw-set",
+     styles: ["fill:#dedede"]
+     }];
+     */
     function createStyleItems(attr) {
       var min = window.Powerset.colorByAttributeValues.min;
       var max = window.Powerset.colorByAttributeValues.max;
@@ -696,7 +670,7 @@ Array.prototype.unique = function() {
     }
 
     function createStyle() {
-      var attr = getAttributes().filter(function(d){ return d.name===window.Powerset.colorByAttribute;})[0];
+      var attr = getAttributes().filter(function(d){ return d.name===that.colorByAttribute;})[0];
       if(!attr){
         attr = getAttributes()[0];
       }
@@ -704,13 +678,7 @@ Array.prototype.unique = function() {
       var pwStyle = $("#pw-style");
       if(pwStyle.length > 0){
         pwStyle.remove();
-      }  
-      /*
-      var arrStyles = [{
-        name: ".pw-set",
-        styles: ["fill:#dedede"]
-      }];
-      */
+      }
       var arrStyles = [];
       if(attr && attr.type==="integer"){
         arrStyles = createStyleItems(attr);
@@ -726,12 +694,10 @@ Array.prototype.unique = function() {
     
     }
 
-
-
     function setColorByAttribute(e){
-      window.Powerset.colorByAttribute = e.currentTarget.value;
+      that.colorByAttribute = e.currentTarget.value;
       createStyle();
-      window.pwInstance.draw();
+      that.draw();
     }
 
     /*
@@ -751,7 +717,7 @@ Array.prototype.unique = function() {
         var arr = getAttributes();
         for (var i = arr.length - 1; i >= 0; i--) {
           var x = arr[i];
-          var selected = Powerset.colorByAttribute === x.name;
+          var selected = that.colorByAttribute === x.name;
           builder.push("<option value='" + x.name + "' + selected='" + selected + "'>" + x.name + " </option>");
         }
         builder.push("</select>");
@@ -801,6 +767,5 @@ Array.prototype.unique = function() {
     console.info("Powerset active: " + ps.active);
     UpSet();
   };
-
 
 })(window);
