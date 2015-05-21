@@ -29,9 +29,6 @@ Array.prototype.unique = function() {
   console.log("powerset registered!");
   window.document.title += " - Powerset!";
 
-  // $(".header-container").append("<span> Powerset: <input type='checkbox' checked='checked' onclick='window.Powerset.toggle()'></span>");
-
-
   var ps = window.Powerset = function PowerSet(c, rr, s) {
     var that = this;
     var svg = d3.select("#bodyVis").select("svg");
@@ -44,8 +41,6 @@ Array.prototype.unique = function() {
     
     
     window.Powerset.colorByAttribute = setAttributeOrFirstAttribute(window.Powerset.colorByAttribute);
-    // console.log("init powerset with " + renderRows.length + " renderRows");
-    // console.log("init powerset with " + sets.length + " sets");
 
     $("#bodyVis").prepend("<div id='ps-control-panel' class='ps-control-panel'></div>");
 
@@ -294,7 +289,12 @@ Array.prototype.unique = function() {
       console.log("calc set widths: ", gWidth, (Powerset.setPadding * (lsets - 1)), (minWidth * lsets ));
       subsets.forEach(function(set, idx) {
         var w = parseFloat((set.setSize * setwidth).toFixed(3),10);
-        setWidths[idx] = w < minWidth ? w + minWidth : w; //+ minWidth;
+        if(activeMoreBlock){
+          setWidths[idx] = w < minWidth ? w + minWidth : w; //+ minWidth;
+        }else{
+          setWidths[idx] = w;
+        }
+
       });
 
       var height = (gHeight);
@@ -499,6 +499,23 @@ Array.prototype.unique = function() {
         });
     }
 
+    function drawModalSvg(hiddenSets, height, width){
+
+      //reduce a litte because of modal
+      height -= 50;
+      width -= 50;
+
+      d3.select("#pw-show-more-modal svg").remove();
+      var modalSvg = d3.select("#pw-show-more-modal").append("svg").attr("height",height).attr("width",width);
+      var g = modalSvg.append("rect").attr("x",0).attr("y",0).attr("height",height).attr("width",width).style({"fill":"transparent"});
+      var obj = { subSets : hiddenSets , setSize : 0};
+      hiddenSets.forEach(function(d){
+        obj.setSize += d.setSize;
+      });
+
+      drawSubset(modalSvg, width, g[0][0], obj, 9999, false);
+    }
+
     function drawShowMoreModal(hiddenSets){
       var modal = $("#pw-show-more-modal");
       if(modal.length > 0){
@@ -508,18 +525,15 @@ Array.prototype.unique = function() {
       bodyVis.append("<div id='pw-show-more-modal'>");
       bodyVis.css("position","relative");
 
-      var modalSvg = d3.select("#pw-show-more-modal").append("svg").attr("height",200).attr("width",500);
-      var g = modalSvg.append("rect").attr("x",0).attr("y",0).attr("height",200).attr("width",500).style({"fill":"transparent"});
-      var obj = { subSets : hiddenSets , setSize : 0};
-      hiddenSets.forEach(function(d){
-        obj.setSize += d.setSize;
-      });
-
-      drawSubset(modalSvg, 400, g[0][0], obj, 9999, false);
+      drawModalSvg(hiddenSets,200,500);
 
       $("#pw-show-more-modal").dialog({
         width: "500px",
-        position: { my: "right", at: "right", of: window }
+        position: { my: "right", at: "right", of: window },
+        resizeStop: function(evt,ui){
+          console.log("ui",ui);
+          drawModalSvg(hiddenSets,ui.size.height.toFixed(0),ui.size.width.toFixed(0));
+        }
       });
       
     }
