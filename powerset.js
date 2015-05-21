@@ -184,9 +184,6 @@ Array.prototype.unique = function() {
         .attr("width", rectsWidth)
         .attr("height", function(d, idx) {
           return groupHeights[idx];
-        })
-        .on("click", function(d, idx) {
-          console.info(d.data.elementName, groupHeights[idx]);
         });
       groupRects.exit().remove();
 
@@ -385,10 +382,6 @@ Array.prototype.unique = function() {
           var row = 0;  
           return y + (row * height);           
         })
-        .on("click", function(d) {
-          var strNames = d.items.map(getAttributeInfo);
-          console.info(d.elementName, d.setSize, strNames.join(","), d);
-        })
         .attr("width",function(d,idx){
           return setWidths[idx];
         })
@@ -415,10 +408,6 @@ Array.prototype.unique = function() {
             .attr("y", function() {
               var row = 0;
               return y + (row * height);
-            })
-            .on("click", function(d) {
-              var strNames = d.items.map(getAttributeInfo);
-              console.info(d.elementName, d.setSize, strNames.join(","), d);
             })
             .attr("width",function(d,idx){
               var per = getSetSelectedPercent(d.items);
@@ -452,8 +441,7 @@ Array.prototype.unique = function() {
           })
           .append("p")
           .on("click", function(d) {
-            var strNames = d.items.map(getAttributeInfo);
-            console.info(d.elementName, d.setSize, strNames.join(","), d);
+            createSelection(d.items);
           })
           .attr("class","pw-set-text-center")
           .html(function(d) {
@@ -585,6 +573,15 @@ Array.prototype.unique = function() {
       return {totalSize: totalSize, overallSize: overallSize};
     }
 
+    function createSelection(items){
+      if(selections.list.length > 0){
+        selections.removeSelection( selections.list[0]);
+      }
+      var selection = new Selection(items, new FilterCollection("#filters-controls", "#filters-list"));
+      selections.addSelection(selection, true);
+      selections.setActive(selection);
+    }
+
     function drawSetsBySize(){
       var subsetRows = usedSets.sort(function(a,b){
         return b.setSize - a.setSize;
@@ -636,13 +633,7 @@ Array.prototype.unique = function() {
         console.log(getSelectedItems());
         that.draw();
 
-        if(selections.list.length > 0){
-          selections.removeSelection( selections.list[0]);
-        }
-        var selection = new Selection(getSelectedItems(), new FilterCollection("#filters-controls", "#filters-list"));
-        selections.addSelection(selection, true);
-        selections.setActive(selection);
-        
+        createSelection(getSelectedItems());
       });
       
     }
