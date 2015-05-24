@@ -246,7 +246,15 @@ Array.prototype.unique = function() {
       var subsets = data.subSets || [];
 
       subsets.sort(function(a,b){
-        return b.setSize - a.setSize;
+        if(b.setSiez === a.setSize)
+        {
+          return (a.elementName < b.elementName) ? -1 : (a.elementName > b.elementName) ? 1 : 0;
+        }
+        else
+        {
+          return (b.setSize < a.setSize) ? -1 : 1;
+        }
+        //return b.setSize - a.setSize || a.elementName - b.elementName;
       });
 
       if (that.options.showSubsetWithoutData) {
@@ -518,9 +526,13 @@ Array.prototype.unique = function() {
       });
       var arr = selItems || [];
       arrselsets.forEach(function(d){
-        arr = arr.concat(d.baseSet.items);
+        arr = arr.concat(d.baseSet.items.filter(function(itm){
+          return arr.indexOf(itm) < 0;
+        }));
+        //arr = arr.concat(d.baseSet.items);
       });
-      return arr.unique();
+      //return arr.unique();
+      return arr;
     }
 
     function getCountsForProgressbar(groupRows) {
