@@ -253,7 +253,7 @@ Array.prototype.unique = function() {
       var subsets = data.subSets || [];
 
       subsets.sort(function(a,b){
-        if(b.setSiez === a.setSize)
+        if(b.setSize === a.setSize)
         {
           return (a.elementName < b.elementName) ? -1 : (a.elementName > b.elementName) ? 1 : 0;
         }
