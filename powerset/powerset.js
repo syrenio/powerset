@@ -24,6 +24,13 @@ Array.prototype.unique = function() {
   console.log("powerset registered!");
   window.document.title += " - Powerset!";
 
+
+  /**
+   * Powerset class
+   *
+   * @class PowerSet
+   * @constructor
+   */
   var ps = window.Powerset = function PowerSet(c, rr, s, options) {
     var that = this;
     var svg = d3.select("#bodyVis").select("svg");
