@@ -259,16 +259,28 @@ Array.prototype.unique = function() {
       var setWidths = [];
       var minWidth = that.options.minimalSetWidth;
       var lsets = subsets.length;
-      var setwidth = (gWidth - (that.options.setPadding * (lsets - 1)) /*- (minWidth * lsets ) */) / groupSetSize;
-      subsets.forEach(function(set, idx) {
-        var w = parseFloat((set.setSize * setwidth).toFixed(3),10);
-        if(activeMoreBlock){
-          setWidths[idx] = w < minWidth ? w + minWidth : w; //+ minWidth;
-        }else{
-          setWidths[idx] = w;
-        }
+      var usableWidth = (gWidth - (that.options.setPadding * (lsets - 1)) /*- (minWidth * lsets ) */);
+      var setwidth = usableWidth / groupSetSize;
+      var setSizeInfos = [];
 
+      //calc withs
+      subsets.forEach(function(set, idx) {
+        var w = parseFloat((set.setSize * setwidth).toFixed(3), 10);
+        setSizeInfos[idx] = w < minWidth;
+        setWidths[idx] = w;
       });
+
+      //calc with adjusted widths
+      if(activeMoreBlock) {
+        usableWidth = (gWidth - (that.options.setPadding * (lsets - 1)) - (minWidth * setSizeInfos.filter(function (d) {
+          return d;
+        }).length ));
+        setwidth = usableWidth / groupSetSize;
+        subsets.forEach(function (set, idx) {
+          var w = parseFloat((set.setSize * setwidth).toFixed(3), 10);
+          setWidths[idx] = w < minWidth ? minWidth : w;
+        });
+      }
 
       var height = (gHeight);
 
@@ -728,7 +740,7 @@ Array.prototype.unique = function() {
     groupSetPadding: 5,
     setPadding: 5,
     minimalSetHeight: 5,
-    minimalSetWidth: 30,
+    minimalSetWidth: 10,
     /* X Percent is reserved for the "+Show more Block" */
     showMorePercent: 10,
     showSubsetTexts: true,
