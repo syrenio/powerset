@@ -7,18 +7,8 @@
 }
 
 .pw-gset{
-	/*
-	stroke: black;
-	stroke-opacity: 0.2;
-	*/
 	fill: transparent;
 }
-/*
-.pw-gset:hover{
-	stroke-opacity: 1;
-	cursor: pointer;
-}
-*/
 
 .pw-set{
 	stroke: blue;
@@ -74,7 +64,6 @@ div.ps-control-panel{
 }
 
 .row progress{
-	/*margin-left: 20px;*/
 	width: 100px;
 	float: right;
 }
@@ -93,18 +82,11 @@ div.ps-control-panel{
 	fill: lightgray
 }
 
-.pw-collapsed{
-	
-}
-
 #pw-show-more-modal{
 	height: 100%;
 	width: 500px;
 }
-/*
-	background: #dedede;
-	top: 0;
-	right: 0;
-	position: absolute;
+
+.ui-dialog .ui-dialog-titlebar{
+	font-size: 10px;
 }
-*/

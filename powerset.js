@@ -78,17 +78,6 @@ Array.prototype.unique = function() {
       return list;
     }
 
-    function getAttributeInfo(val) {
-
-      var strinfo = "";
-      var arr = getAttributes();
-      for (var i = arr.length - 1; i >= 0; i--) {
-        var attr = arr[i];
-        strinfo += attr.name + ":" + attr.values[val] + "  ";
-      }
-      return strinfo;
-    }
-
     function getAttributeValue(name, val) {
       for (var i = attributes.length - 1; i >= 0; i--) {
         var attr = attributes[i];
@@ -494,12 +483,13 @@ Array.prototype.unique = function() {
       if(modal.length > 0){
         modal.remove();
       }
-      var bodyVis = $("#bodyVis")
+      var bodyVis = $("#bodyVis");
       bodyVis.append("<div id='pw-show-more-modal'>");
       bodyVis.css("position","relative");
 
       drawModalSvg(hiddenSets,200,500);
 
+      $("#pw-show-more-modal").attr("title","Show more Sets");
       $("#pw-show-more-modal").dialog({
         width: "500px",
         position: { my: "right", at: "right", of: window },
