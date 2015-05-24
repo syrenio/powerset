@@ -7,9 +7,6 @@
 /* global attributes */
 /* global d3 */
 /* global $ */
-/*
-  use renderRows and sets-> Original Data !
-*/
 
 Array.prototype.unique = function() {
     var a = this.concat();
@@ -24,12 +21,10 @@ Array.prototype.unique = function() {
 
 (function(window) {
 
-  //window.Powerset = window.Powerset || {};
-  //var ps = window.Powerset;
   console.log("powerset registered!");
   window.document.title += " - Powerset!";
 
-  var ps = window.Powerset = function PowerSet(c, rr, s) {
+  var ps = window.Powerset = function PowerSet(c, rr, s, options) {
     var that = this;
     var svg = d3.select("#bodyVis").select("svg");
     var ctx = c;
@@ -39,8 +34,9 @@ Array.prototype.unique = function() {
     var openSets = [];
     var selectedSets = [];
     
-    
-    that.colorByAttribute = setAttributeOrFirstAttribute(that.colorByAttribute);
+    that.options = $.extend({}, PowersetOptions, options);
+
+    that.colorByAttribute = setAttributeOrFirstAttribute(that.options.defaultColorByAttribute);
 
     $("#bodyVis").prepend("<div id='ps-control-panel' class='ps-control-panel'></div>");
 
@@ -60,7 +56,7 @@ Array.prototype.unique = function() {
         return d.data.type === ROW_TYPE.SUBSET;
       });
     }
-    
+
     function setAttributeOrFirstAttribute(name){
       var fattrs = getAttributes().filter(function(d){return d.name===name;});
       if(fattrs && fattrs.length > 0){
@@ -101,7 +97,7 @@ Array.prototype.unique = function() {
         }
       }
     }
-    
+
     function getAttributeByName(name) {
       for (var i = attributes.length - 1; i >= 0; i--) {
         var attr = attributes[i];
@@ -129,8 +125,8 @@ Array.prototype.unique = function() {
       //var visContainer = $(document.getElementById("set-vis-container"));
       //svg.attr("height", parseInt(visContainer.height() - 300, 10));
       //svg.attr("width", parseInt(visContainer.width() - 200, 10));
-      svg.attr("height",Powerset.size.height);
-      svg.attr("width",Powerset.size.width);
+      svg.attr("height",that.options.size.height);
+      svg.attr("width",that.options.size.width);
       var svgWidth = parseInt(svg.attr("width"), 10);
       var svgHeight = parseInt(svg.attr("height"), 10);
       var rectsWidth = svgWidth - 30;
@@ -139,23 +135,23 @@ Array.prototype.unique = function() {
       var allSizes = 0;
       groupRows.forEach(function(group, idx) {
         if(typeof(openSets[idx]) == "undefined"){
-          openSets[idx] = true;  
+          openSets[idx] = true;
         }
         if(openSets[idx]){
-          allSizes += group.data.setSize;  
+          allSizes += group.data.setSize;
         }
       });
-       
+
       var groupHeights = [];
-      var minHeight = Powerset.minimalSetHeight;
+      var minHeight = that.options.minimalSetHeight;
       var groups = (groupRows.length);
-      var x = (svgHeight - (Powerset.groupSetPadding * groups) - (minHeight * groups)) / allSizes;
+      var x = (svgHeight - (that.options.groupSetPadding * groups) - (minHeight * groups)) / allSizes;
       groupRows.forEach(function(set, idx) {
         if(openSets[idx]){
-          groupHeights[idx] = parseFloat((set.data.setSize * x).toFixed(3),10) + minHeight;  
+          groupHeights[idx] = parseFloat((set.data.setSize * x).toFixed(3),10) + minHeight;
         }else{
           groupHeights[idx] = minHeight;
-        }        
+        }
       });
 
       // TODO: insert <g>
@@ -173,7 +169,7 @@ Array.prototype.unique = function() {
           if(prevHeights.length > 0){
             prevHeight = prevHeights.reduce(function(r,x){return r+x;});
           }
-          prevHeight += (Powerset.groupSetPadding * idx);
+          prevHeight += (that.options.groupSetPadding * idx);
           return prevHeight;
         })
         .attr("width", rectsWidth)
@@ -198,7 +194,7 @@ Array.prototype.unique = function() {
           if(prevHeights.length > 0){
             prevHeight = prevHeights.reduce(function(r,x){return r+x;});
           }
-          prevHeight += (Powerset.groupSetPadding * idx);
+          prevHeight += (that.options.groupSetPadding * idx);
           var val = groupHeights[idx];
           return (val / 2) + prevHeight;
         });
@@ -207,7 +203,7 @@ Array.prototype.unique = function() {
       drawSubsets(svg, groupRects, rectsWidth);
       drawSetsBySize();
       drawElementsByDegree();
-      
+
 
       createStyle();
       createAttributeSelect();
@@ -264,7 +260,7 @@ Array.prototype.unique = function() {
         return b.setSize - a.setSize;
       });
 
-      if (ps.showSubsetWithoutData) {
+      if (that.options.showSubsetWithoutData) {
         subsets = subsets.filter(function(d) {
           return d.setSize > 0;
         });
@@ -272,9 +268,9 @@ Array.prototype.unique = function() {
 
       // TODO: calc width and the sets that will be displayed and add minWdith for them.
       var setWidths = [];
-      var minWidth = Powerset.minimalSetWidth;
-      var lsets = subsets.length; 
-      var setwidth = (gWidth - (Powerset.setPadding * (lsets - 1)) /*- (minWidth * lsets ) */) / groupSetSize;
+      var minWidth = that.options.minimalSetWidth;
+      var lsets = subsets.length;
+      var setwidth = (gWidth - (that.options.setPadding * (lsets - 1)) /*- (minWidth * lsets ) */) / groupSetSize;
       subsets.forEach(function(set, idx) {
         var w = parseFloat((set.setSize * setwidth).toFixed(3),10);
         if(activeMoreBlock){
@@ -286,7 +282,7 @@ Array.prototype.unique = function() {
       });
 
       var height = (gHeight);
-      
+
       var lastX = null;
       var lastIdx = null;
 
@@ -296,7 +292,7 @@ Array.prototype.unique = function() {
         if(prevWidths.length > 0){
           prevWidth = prevWidths.reduce(function(r,x){return r+x;});
         }
-        prevWidth += (Powerset.setPadding * idx);
+        prevWidth += (that.options.setPadding * idx);
         return prevWidth;
       }
 
@@ -317,7 +313,7 @@ Array.prototype.unique = function() {
         var prevWidth = getPreviousWidth(i);
         var startX = x + prevWidth;
         if(activeMoreBlock){
-          var perc = (gWidth * (1 - (Powerset.showMorePercent/100)));
+          var perc = (gWidth * (1 - (that.options.showMorePercent/100)));
           if(startX >= perc){
             if(lastX === null){
               lastX = startX;
@@ -368,8 +364,8 @@ Array.prototype.unique = function() {
         })
         .attr("x", funcSubSetX)
         .attr("y", function() {
-          var row = 0;  
-          return y + (row * height);           
+          var row = 0;
+          return y + (row * height);
         })
         .attr("width",function(d,idx){
           return setWidths[idx];
@@ -384,7 +380,7 @@ Array.prototype.unique = function() {
       var nonShownWidths = setWidths.filter(function(x,i){return i >= lastIdx; });
       drawShowMoreRect(idx, lastX, y, height, (gWidth-prevWidth), nonShownWidths.length, hiddenSets);
 
-      if(ps.showSubsetSelection){
+      if(that.options.showSubsetSelection){
         svg.selectAll("rect.pw-set-sel-" + idx).remove();
         var subSetSelectionRect = svg.selectAll("rect.pw-set-sel-" + idx).data(subsets);
         subSetSelectionRect.enter().append("rect")
@@ -406,7 +402,7 @@ Array.prototype.unique = function() {
         subSetSelectionRect.exit().remove();
       }
 
-      if (ps.showSubsetTexts) {
+      if (that.options.showSubsetTexts) {
         //workaround foreignObjects
         svg.selectAll(".pw-set-text-" + idx).remove();
         var subSetTexts = svg.selectAll("foreignObject.pw-set-text-" + idx).data(subsets).enter();
@@ -414,7 +410,7 @@ Array.prototype.unique = function() {
           .attr("class", "pw-set-text pw-set-text-" + idx)
           .attr("x", funcSubSetX)
           .attr("y", function() {
-            var row = 0;  
+            var row = 0;
             return y + (row * height);
           })
           .attr("height",height)
@@ -454,7 +450,7 @@ Array.prototype.unique = function() {
         .attr("y", y)
         .attr("width", width)
         .attr("height", height);
-     
+
      svg.selectAll(".pw-set-more-text-" + idx).remove();
      svg.append("foreignObject")
         .attr("class","pw-set-more-text pw-set-more-text-" + idx)
@@ -511,9 +507,9 @@ Array.prototype.unique = function() {
           drawModalSvg(hiddenSets,ui.size.height.toFixed(0),ui.size.width.toFixed(0));
         }
       });
-      
+
     }
-    
+
     function getSelectedItems(selItems){
       var arrselsets = selectedSets.filter(function(d){
         return d.active;
@@ -537,7 +533,7 @@ Array.prototype.unique = function() {
       });
       var maxSize = Math.max.apply(null, arr);
 
-      if (Powerset.controlPanelPercentByTotal) {
+      if (that.options.controlPanelPercentByTotal) {
         overallSize = totalSize;
       } else {
         overallSize = maxSize;
@@ -560,13 +556,13 @@ Array.prototype.unique = function() {
       });
 
       var counts = getCountsForProgressbar(subsetRows);
-      
+
       controlPanel.find("#ps-control-panel-sets").remove();
       var setsPanel = controlPanel.append("<div id='ps-control-panel-sets'></div>").find("#ps-control-panel-sets");
       setsPanel.append("<h3>Sets by size");
 
       setsPanel.append("<div class='elm-by-sets-scale'><span>0</span><span>" + counts.overallSize + "</span></div>");
-      
+
       setsPanel.append("<div id='elm-by-sets-rows'></div>");
       var rows = d3.select("#elm-by-sets-rows").selectAll("div.row").data(subsetRows);
       rows.enter()
@@ -579,9 +575,9 @@ Array.prototype.unique = function() {
           if(typeof(selectedSets[idx]) == "undefined"){
             selectedSets[idx] = {active:false, baseSet: d};
           }
-          
+
           var checked = selectedSets[idx].active ? "checked='checked'" : "";
-          
+
           var str = "<input type='checkbox' " + checked + " value='" + idx + "' class='chk-set-size' id='chk-set-size-" + idx + "' data-basesetid='" + d.id + "'>";
           str += "<span>" + d.elementName + "</span>";
           var titleText = d.elementName + " - " + (d.setSize / counts.totalSize * 100).toFixed(3);
@@ -589,9 +585,9 @@ Array.prototype.unique = function() {
           return str;
         });
       rows.exit().remove();
-      
+
       $("input.chk-set-size").on("change",function(){
-        
+
         var idx = $(this).val();
         var baseSetId = $(this).data("basesetid");
         var baseSet = setIdToSet[baseSetId];
@@ -602,7 +598,7 @@ Array.prototype.unique = function() {
 
         createSelection(getSelectedItems());
       });
-      
+
     }
 
     function drawElementsByDegree() {
@@ -651,11 +647,11 @@ Array.prototype.unique = function() {
      }];
      */
     function createStyleItems(attr) {
-      var min = window.Powerset.colorByAttributeValues.min;
-      var max = window.Powerset.colorByAttributeValues.max;
+      var min = that.options.colorByAttributeValues.min;
+      var max = that.options.colorByAttributeValues.max;
       var colorScale = d3.scale.linear().domain([attr.min,attr.max]).range([min.color,max.color]);
       var arr = [];
-      
+
       var subsetRects = svg.selectAll("rect.pw-set");
       subsetRects.each(function() {
         var rect = $(this);
@@ -674,7 +670,7 @@ Array.prototype.unique = function() {
       if(!attr){
         attr = getAttributes()[0];
       }
-      
+
       var pwStyle = $("#pw-style");
       if(pwStyle.length > 0){
         pwStyle.remove();
@@ -691,7 +687,7 @@ Array.prototype.unique = function() {
       });
 
       $('head').append('<style id="pw-style" type="text/css">' + mapped.join(" ") + '</style>');
-    
+
     }
 
     function setColorByAttribute(e){
@@ -701,8 +697,8 @@ Array.prototype.unique = function() {
     }
 
     /*
-     * create attribute selector 
-     * recreate if attribute-count would change 
+     * create attribute selector
+     * recreate if attribute-count would change
      */
     function createAttributeSelect() {
       var attrSelect = $("#attr-select");
@@ -731,41 +727,30 @@ Array.prototype.unique = function() {
 
   };
 
-
   /* OPTIONS */
-  ps.active = true;
-  ps.size = {
-    height : 500,
-    width : 700
-  };
-  /* show percent in control panel by total size or by max size(largest member) */
-  ps.controlPanelPercentByTotal = false;
-  
-  ps.groupSetPadding = 5;
-  ps.setPadding = 5;
-  
-  ps.minimalSetHeight = 5;
-  ps.minimalSetWidth = 30;
-  /* X Percent is reserved for the "+Show more Block" */
-  ps.showMorePercent = 10; 
-  ps.showSubsetTexts = true;
-  ps.showSubsetSelection = true;
-  ps.showSubsetWithoutData = true;
-  ps.colorByAttribute = "Times Watched";
-  
-  /* auto define min and max value */
-  ps.colorByAttributeValues = {
-    min: {
-      color: "white"
+  var PowersetOptions = {
+    size: {
+      height : 500,
+      width : 700
     },
-    max: {
-      color: "darkblue"
-    }
-  };
-  ps.toggle = function() {
-    ps.active = !ps.active;
-    console.info("Powerset active: " + ps.active);
-    UpSet();
-  };
+    /* show percent in control panel by total size or by max size(largest member) */
+    controlPanelPercentByTotal: false,
+    groupSetPadding: 5,
+    setPadding: 5,
+    minimalSetHeight: 5,
+    minimalSetWidth: 30,
+    /* X Percent is reserved for the "+Show more Block" */
+    showMorePercent: 10,
+    showSubsetTexts: true,
+    showSubsetSelection: true,
+    showSubsetWithoutData: true,
+    defaultColorByAttribute: "Times Watched",
+    colorByAttributeValues: {
+      min: {color: "white"},
+      max: {color: "darkblue"}
+    }};
+
+
+  ps.active = true;
 
 })(window);

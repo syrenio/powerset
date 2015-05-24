@@ -2041,7 +2041,7 @@ function UpSet() {
         // decorate subset rows
         if(window.Powerset){
             if(!window.pwInstance){
-                window.pwInstance = new window.Powerset(ctx, renderRows,sets,setScale);
+                window.pwInstance = new window.Powerset(ctx, renderRows, sets);
             }
             if(window.Powerset.active===true){
                 window.pwInstance.draw();
