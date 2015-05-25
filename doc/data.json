@@ -1,0 +1,602 @@
+{
+    "project": {},
+    "files": {
+        "powerset\\powerset.js": {
+            "name": "powerset\\powerset.js",
+            "modules": {},
+            "classes": {
+                "PowerSet": 1,
+                "PowersetOptions": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "PowerSet": {
+            "name": "PowerSet",
+            "shortname": "PowerSet",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "powerset\\powerset.js",
+            "line": 27,
+            "description": "Powerset implementation with D3\nbased on Calculation form Upset",
+            "is_constructor": 1
+        },
+        "PowersetOptions": {
+            "name": "PowersetOptions",
+            "shortname": "PowersetOptions",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "powerset\\powerset.js",
+            "line": 920,
+            "description": "Powerset options",
+            "is_constructor": 1
+        }
+    },
+    "classitems": [
+        {
+            "file": "powerset\\powerset.js",
+            "line": 52,
+            "description": "get group rows from renderRows",
+            "access": "private",
+            "tagname": "",
+            "return": {
+                "description": "group rows"
+            },
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 67,
+            "description": "get sets from renderRows",
+            "access": "private",
+            "tagname": "",
+            "return": {
+                "description": "sets"
+            },
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 79,
+            "description": "set and get attribute by given name (attribute select)",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "attribute name",
+                    "type": "String"
+                }
+            ],
+            "itemtype": "method",
+            "name": "setAttributeOrFirstAttribute",
+            "return": {
+                "description": "attribute name"
+            },
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 97,
+            "description": "get attribute and filter ignored ones",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "getAttributes",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 114,
+            "description": "get attribute value form attributes arry by given name,item",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "itm",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "itemtype": "method",
+            "name": "getAttributeValue",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 131,
+            "description": "get attribute form attributes arry by given name",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "itemtype": "method",
+            "name": "getAttributeByName",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 147,
+            "description": "get render row by given id\ne.g.:: \"1280_1\"  (id from upset calculation)",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "unique id for each render row",
+                    "type": "Integer"
+                }
+            ],
+            "itemtype": "method",
+            "name": "getRenderRowById",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 161,
+            "description": "remove the control panel",
+            "itemtype": "method",
+            "name": "clear",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 171,
+            "description": "main draw methods (draw groups, sets, control panel, modal)",
+            "itemtype": "method",
+            "name": "draw",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 271,
+            "description": "remove or hide all the upset elements we dont need",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "cleanupUpsetParts",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 285,
+            "description": "get the visual statistic for current attribute",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "getVisualStats",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 299,
+            "description": "clear and redraw all rects for the powerset",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "svg",
+                    "description": "svg where all the rects are located",
+                    "type": "SVG"
+                },
+                {
+                    "name": "setRects",
+                    "description": "list of all the sets",
+                    "type": "Array"
+                },
+                {
+                    "name": "rectsWidth",
+                    "description": "usable with for total rects",
+                    "type": "Integer"
+                }
+            ],
+            "itemtype": "method",
+            "name": "drawSubsets",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 322,
+            "description": "draw all the sets/rects for given degree/group",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "svg",
+                    "description": "svg where all the rects are located",
+                    "type": "SVG"
+                },
+                {
+                    "name": "rectsWidth",
+                    "description": "usable with for total rects",
+                    "type": "Integer"
+                },
+                {
+                    "name": "elm",
+                    "description": "group element draws before the sets",
+                    "type": "Array"
+                },
+                {
+                    "name": "elmData",
+                    "description": "data of the elm (group)",
+                    "type": "Object"
+                },
+                {
+                    "name": "row",
+                    "description": "current row index",
+                    "type": "Integer"
+                },
+                {
+                    "name": "activeMoreBlock",
+                    "description": "indicates if the \"more block\" is active",
+                    "type": "Boolean"
+                }
+            ],
+            "itemtype": "method",
+            "name": "drawSubsets",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 551,
+            "description": "draw the \"show more\" rect",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "row",
+                    "description": "row where the rect will be located",
+                    "type": "Integer"
+                },
+                {
+                    "name": "lastX",
+                    "description": "represents the last used x value",
+                    "type": "Integer"
+                },
+                {
+                    "name": "y",
+                    "description": "y possition for the rect",
+                    "type": "Integer"
+                },
+                {
+                    "name": "height",
+                    "description": "",
+                    "type": "Integer"
+                },
+                {
+                    "name": "width",
+                    "description": "",
+                    "type": "Integer"
+                },
+                {
+                    "name": "hiddenSetsCount",
+                    "description": "",
+                    "type": "Integer"
+                },
+                {
+                    "name": "hiddenSets",
+                    "description": "list of sets that are hidden in the regular powerset",
+                    "type": "Array"
+                }
+            ],
+            "itemtype": "method",
+            "name": "drawShowMoreRect",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 597,
+            "description": "draw the svg element of the modal",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "hiddenSets",
+                    "description": "list of sets that are hidden in the regular powerset",
+                    "type": "Array"
+                },
+                {
+                    "name": "height",
+                    "description": "",
+                    "type": "Integer"
+                },
+                {
+                    "name": "width",
+                    "description": "",
+                    "type": "Integer"
+                }
+            ],
+            "itemtype": "method",
+            "name": "drawModalSvg",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 623,
+            "description": "draw the show more modal + sets",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "hiddenSets",
+                    "description": "list of sets that are hidden in the regular powerset",
+                    "type": "Array"
+                }
+            ],
+            "itemtype": "method",
+            "name": "drawShowMoreModal",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 653,
+            "description": "get element by selected sets\ngiven selItems represents a optional base ids",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "selIetms",
+                    "description": "list of element ids",
+                    "type": "Array"
+                }
+            ],
+            "itemtype": "method",
+            "name": "getSelectedItems",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 676,
+            "description": "calculate number for a progress bar",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "groupRows",
+                    "description": "list of rows",
+                    "type": "Array"
+                }
+            ],
+            "itemtype": "method",
+            "name": "getCountsForProgressbar",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 703,
+            "description": "create a selection with given items and the selection engine",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "items",
+                    "description": "a list of item ids",
+                    "type": "Array"
+                }
+            ],
+            "itemtype": "method",
+            "name": "createSelection",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 719,
+            "description": "draw control panel element \"sets by size\"",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "drawSetsBySize",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 776,
+            "description": "draw control panel element \"elements by degree\"",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "drawElementsByDegree",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 820,
+            "description": "create css style class for given attribute",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "attr",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "itemtype": "method",
+            "name": "createStyleItems",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 846,
+            "description": "create style tag with css classes",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "createStyle",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 883,
+            "description": "create attribute selector\nrecreate if attribute-count would change",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "createAttributeSelect",
+            "class": "PowerSet"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 927,
+            "description": "Render size of the Powerset",
+            "itemtype": "property",
+            "name": "size",
+            "type": "{Object}",
+            "default": "\"{ height : 500, width : 700}\"",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 937,
+            "description": "Show percent in control panel by total size or by max size(largest member)",
+            "itemtype": "property",
+            "name": "controlPanelPercentByTotal",
+            "type": "{boolean}",
+            "default": "false",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 944,
+            "description": "Padding between Groups (Degree)",
+            "itemtype": "property",
+            "name": "groupSetPadding",
+            "type": "{integer}",
+            "default": "5",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 951,
+            "description": "Padding between Sets",
+            "itemtype": "property",
+            "name": "setPadding",
+            "type": "{integer}",
+            "default": "5",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 958,
+            "description": "Minimal height of a set",
+            "itemtype": "property",
+            "name": "minimalSetHeight",
+            "type": "{integer}",
+            "default": "5",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 965,
+            "description": "Minimal width of a set",
+            "itemtype": "property",
+            "name": "minimalSetWidth",
+            "type": "{integer}",
+            "default": "10",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 972,
+            "description": "Shows much percent are reserved for the \"+Show more Block\"",
+            "itemtype": "property",
+            "name": "showMorePercent",
+            "type": "{integer}",
+            "default": "10",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 979,
+            "description": "Show the text of sets",
+            "itemtype": "property",
+            "name": "showSubsetTexts",
+            "type": "{boolean}",
+            "default": "true",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 986,
+            "description": "Show selection in Subsets",
+            "itemtype": "property",
+            "name": "showSubsetSelection",
+            "type": "{boolean}",
+            "default": "true",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 993,
+            "description": "Display sets without data",
+            "itemtype": "property",
+            "name": "showSubsetWithoutData",
+            "type": "{boolean}",
+            "default": "true",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 1000,
+            "description": "Default selected attribute if exists",
+            "itemtype": "property",
+            "name": "defaultColorByAttribute",
+            "type": "{string}",
+            "default": "\"Time Watched\"",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 1007,
+            "description": "Color scale for coloring by attribute",
+            "itemtype": "property",
+            "name": "colorByAttributeValues",
+            "type": "{object}",
+            "default": "\"{min:{color:\"white\"},max:{color:\"darkblue\"}}\"",
+            "class": "PowersetOptions"
+        },
+        {
+            "file": "powerset\\powerset.js",
+            "line": 1019,
+            "description": "Indicates that the powerset is active",
+            "itemtype": "property",
+            "name": "active",
+            "type": "{boolean}",
+            "default": "true",
+            "class": "PowersetOptions"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "replacing incorrect tag: params with param",
+            "line": " powerset\\powerset.js:79"
+        },
+        {
+            "message": "Missing item type\nget group rows from renderRows",
+            "line": " powerset\\powerset.js:52"
+        },
+        {
+            "message": "Missing item type\nget sets from renderRows",
+            "line": " powerset\\powerset.js:67"
+        }
+    ]
+}
