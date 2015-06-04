@@ -168,32 +168,13 @@ Array.prototype.unique = function() {
     };
 
 
-    /**
-     * main draw methods (draw groups, sets, control panel, modal)
-     *
-     * @method draw
-     */
-    this.draw = function() {
-      var date = new Date();
-
-      var groupRows = getGroupRows();
-
-      //var visContainer = $(document.getElementById("set-vis-container"));
-      //svg.attr("height", parseInt(visContainer.height() - 300, 10));
-      //svg.attr("width", parseInt(visContainer.width() - 200, 10));
-      svg.attr("height",that.options.size.height);
-      svg.attr("width",that.options.size.width);
-      var svgWidth = parseInt(svg.attr("width"), 10);
-      var svgHeight = parseInt(svg.attr("height"), 10);
-      var rectsWidth = svgWidth - 30;
-
-      /* init loop */
+    function calcGroupHeights(groupRows, svgHeight) {
       var allSizes = 0;
-      groupRows.forEach(function(group, idx) {
-        if(typeof(openSets[idx]) == "undefined"){
+      groupRows.forEach(function (group, idx) {
+        if (typeof(openSets[idx]) == "undefined") {
           openSets[idx] = true;
         }
-        if(openSets[idx]){
+        if (openSets[idx]) {
           allSizes += group.data.setSize;
         }
       });
@@ -202,58 +183,85 @@ Array.prototype.unique = function() {
       var minHeight = that.options.minimalSetHeight;
       var groups = (groupRows.length);
       var x = (svgHeight - (that.options.groupSetPadding * groups) - (minHeight * groups)) / allSizes;
-      groupRows.forEach(function(set, idx) {
-        if(openSets[idx]){
-          groupHeights[idx] = parseFloat((set.data.setSize * x).toFixed(3),10) + minHeight;
-        }else{
+      groupRows.forEach(function (set, idx) {
+        if (openSets[idx]) {
+          groupHeights[idx] = parseFloat((set.data.setSize * x).toFixed(3), 10) + minHeight;
+        } else {
           groupHeights[idx] = minHeight;
         }
       });
+      return groupHeights;
+    }
+
+    /**
+     * main draw methods (draw groups, sets, control panel, modal)
+     *
+     * @method draw
+     */
+    this.draw = function() {
+
+      var groupRows = getGroupRows();
+      svg.attr("height", that.options.size.height);
+      svg.attr("width", that.options.size.width);
+      var svgWidth = parseInt(svg.attr("width"), 10);
+      var svgHeight = parseInt(svg.attr("height"), 10);
+      var rectsWidth = svgWidth - 30;
+
+      /* init loop */
+      var groupHeights = calcGroupHeights(groupRows, svgHeight);
 
       // TODO: insert <g>
       svg.selectAll("rect.pw-gset").remove();
       var groupRects = svg.selectAll("rect.pw-gset").data(groupRows);
       groupRects.enter()
-        .append("rect")
-        .attr("class", function(d, idx) {
-          return "pw-gset pw-gset-" + idx;
-        })
-        .attr("x", 20)
-        .attr("y", function(d, idx) {
-          var prevHeights = groupHeights.filter(function(x,i){return i < idx; });
-          var prevHeight = 0;
-          if(prevHeights.length > 0){
-            prevHeight = prevHeights.reduce(function(r,x){return r+x;});
-          }
-          prevHeight += (that.options.groupSetPadding * idx);
-          return prevHeight;
-        })
-        .attr("width", rectsWidth)
-        .attr("height", function(d, idx) {
-          return groupHeights[idx];
-        });
+          .append("rect")
+          .attr("class", function (d, idx) {
+            return "pw-gset pw-gset-" + idx;
+          })
+          .attr("x", 20)
+          .attr("y", function (d, idx) {
+            var prevHeights = groupHeights.filter(function (x, i) {
+              return i < idx;
+            });
+            var prevHeight = 0;
+            if (prevHeights.length > 0) {
+              prevHeight = prevHeights.reduce(function (r, x) {
+                return r + x;
+              });
+            }
+            prevHeight += (that.options.groupSetPadding * idx);
+            return prevHeight;
+          })
+          .attr("width", rectsWidth)
+          .attr("height", function (d, idx) {
+            return groupHeights[idx];
+          });
       groupRects.exit().remove();
 
       svg.selectAll("text.pw-gtext").remove();
       var gTexts = svg.selectAll("text.pw-gtext").data(groupRows);
       gTexts.enter()
-        .append("text")
-        .text(function(d, idx) {
-          return idx;
-        })
-        .attr("class", "pw-gtext")
-        .attr("x", 5)
-        .attr("dy",".35em")
-        .attr("y", function(d, idx) {
-          var prevHeights = groupHeights.filter(function(x,i){return i < idx; });
-          var prevHeight = 0;
-          if(prevHeights.length > 0){
-            prevHeight = prevHeights.reduce(function(r,x){return r+x;});
-          }
-          prevHeight += (that.options.groupSetPadding * idx);
-          var val = groupHeights[idx];
-          return (val / 2) + prevHeight;
-        });
+          .append("text")
+          .text(function (d, idx) {
+            return idx;
+          })
+          .attr("class", function(d,idx){return "pw-gtext pw-gtext-" + idx;})
+          .attr("x", 5)
+          .attr("dy", ".35em")
+          .attr("y", function (d, idx) {
+            var prevHeights = groupHeights.filter(function (x, i) {
+              return i < idx;
+            });
+            var prevHeight = 0;
+            if (prevHeights.length > 0) {
+              prevHeight = prevHeights.reduce(function (r, x) {
+                return r + x;
+              });
+            }
+            prevHeight += (that.options.groupSetPadding * idx);
+            var val = groupHeights[idx];
+            return (val / 2) + prevHeight;
+          });
       gTexts.exit().remove();
 
       drawSubsets(svg, groupRects, rectsWidth);
@@ -809,10 +817,47 @@ Array.prototype.unique = function() {
       rows.exit().remove();
 
       $("input.chk-set-degree").on("change", function () {
-        var idx = $(this).val();
-        console.log("change: ", openSets[idx], " => ", !openSets[idx]);
-        openSets[idx] = !openSets[idx];
-        that.draw();
+        var openSetIdx = $(this).val();
+        console.log("change: ", openSets[openSetIdx], " => ", !openSets[openSetIdx]);
+        openSets[openSetIdx] = !openSets[openSetIdx];
+
+        var groupRows = getGroupRows();
+        var svgHeight = parseInt(svg.attr("height"), 10);
+        var groupHeights = calcGroupHeights(groupRows, svgHeight);
+        var toSelect = [".pw-gset-"+openSetIdx, ".pw-set-sel-"+openSetIdx, ".pw-set-"+openSetIdx, ".pw-set-text-"+openSetIdx];
+
+        console.log(groupHeights)
+        svg.selectAll(toSelect).transition().duration(300)
+            .attr({
+              "height" : groupHeights[openSetIdx]
+            });
+
+        groupHeights.forEach(function(itm,idx){
+          console.log(groupHeights[idx]);
+        });
+/*
+        var fnChangeY = function(d,index){
+          var prevHeights = groupHeights.filter(function (x, i) {
+            return i < index;
+          });
+          var prevHeight = 0;
+          if (prevHeights.length > 0) {
+            prevHeight = prevHeights.reduce(function (r, x) {
+              return r + x;
+            });
+          }
+          prevHeight += (that.options.groupSetPadding * index);
+          console.log("prevHeight",prevHeight);
+          return prevHeight;
+        };
+
+        // y + (row * height);
+        svg.selectAll(".pw-gset").transition().duration(300).attr({"y": fnChangeY});
+        svg.selectAll(".pw-set-sel").transition().duration(300).attr({"y": fnChangeY});
+        svg.selectAll(".pw-set").transition().duration(300).attr({"y": fnChangeY});
+        svg.selectAll(".pw-set-text").transition().duration(300).attr({"y": fnChangeY});
+        //that.draw();
+*/
       });
 
     }
