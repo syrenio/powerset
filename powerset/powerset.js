@@ -826,19 +826,11 @@ Array.prototype.unique = function() {
         var groupHeights = calcGroupHeights(groupRows, svgHeight);
         var toSelect = [".pw-gset-"+openSetIdx, ".pw-set-sel-"+openSetIdx, ".pw-set-"+openSetIdx, ".pw-set-text-"+openSetIdx];
 
-        console.log(groupHeights)
-        svg.selectAll(toSelect).transition().duration(300)
-            .attr({
-              "height" : groupHeights[openSetIdx]
-            });
+        console.log(groupHeights);
 
-        groupHeights.forEach(function(itm,idx){
-          console.log(groupHeights[idx]);
-        });
-/*
-        var fnChangeY = function(d,index){
+        function getPrevHeight(idx){
           var prevHeights = groupHeights.filter(function (x, i) {
-            return i < index;
+            return i < idx;
           });
           var prevHeight = 0;
           if (prevHeights.length > 0) {
@@ -846,18 +838,20 @@ Array.prototype.unique = function() {
               return r + x;
             });
           }
-          prevHeight += (that.options.groupSetPadding * index);
-          console.log("prevHeight",prevHeight);
+          prevHeight += (that.options.groupSetPadding * idx);
           return prevHeight;
-        };
+        }
 
-        // y + (row * height);
-        svg.selectAll(".pw-gset").transition().duration(300).attr({"y": fnChangeY});
-        svg.selectAll(".pw-set-sel").transition().duration(300).attr({"y": fnChangeY});
-        svg.selectAll(".pw-set").transition().duration(300).attr({"y": fnChangeY});
-        svg.selectAll(".pw-set-text").transition().duration(300).attr({"y": fnChangeY});
-        //that.draw();
-*/
+        groupHeights.forEach(function(itm,idx){
+          console.log(idx,groupHeights[idx]);
+          var y = getPrevHeight(idx);
+          var arr = [".pw-gset-"+idx, ".pw-set-sel-"+idx, ".pw-set-"+idx, ".pw-set-text-"+idx, ".pw-set-more-"+idx, ".pw-set-more-text-"+idx];
+          var gtextY = (groupHeights[idx] / 2) + y;
+          svg.selectAll(".pw-gtext-"+idx).transition().duration(300).attr({"y":gtextY});
+          svg.selectAll(arr).transition().duration(300).attr({"y": y, "height":groupHeights[idx]});
+
+        });
+
       });
 
     }
@@ -957,108 +951,6 @@ Array.prototype.unique = function() {
       }
     }
 
-  };
-
-
-
-  /* OPTIONS */
-  /**
-   * Powerset options
-   *
-   * @class PowersetOptions
-   * @constructor
-   */
-  window.PowersetOptions = function() {
-    /**
-     * Render size of the Powerset
-     * @property size
-     * @type {Object}
-     * @default "{ height : 500, width : 700}"
-     */
-    this.size = {
-      height : 500,
-      width : 700
-    };
-    /**
-     * Show percent in control panel by total size or by max size(largest member)
-     * @property controlPanelPercentByTotal
-     * @type {boolean}
-     * @default false
-     */
-    this.controlPanelPercentByTotal= false;
-    /**
-     * Padding between Groups (Degree)
-     * @property groupSetPadding
-     * @type {integer}
-     * @default 5
-     */
-    this.groupSetPadding= 5;
-    /**
-     * Padding between Sets
-     * @property setPadding
-     * @type {integer}
-     * @default 5
-     */
-    this.setPadding= 5;
-    /**
-     * Minimal height of a set
-     * @property minimalSetHeight
-     * @type {integer}
-     * @default 5
-     */
-    this.minimalSetHeight= 5;
-    /**
-     * Minimal width of a set
-     * @property minimalSetWidth
-     * @type {integer}
-     * @default 10
-     */
-    this.minimalSetWidth= 10;
-    /**
-     * Shows much percent are reserved for the "+Show more Block"
-     * @property showMorePercent
-     * @type {integer}
-     * @default 10
-     */
-    this.showMorePercent= 10;
-    /**
-     * Show the text of sets
-     * @property showSubsetTexts
-     * @type {boolean}
-     * @default true
-     */
-    this.showSubsetTexts= true;
-    /**
-     * Show selection in Subsets
-     * @property showSubsetSelection
-     * @type {boolean}
-     * @default true
-     */
-    this.showSubsetSelection= true;
-    /**
-     * Display sets without data
-     * @property showSubsetWithoutData
-     * @type {boolean}
-     * @default true
-     */
-    this.showSubsetWithoutData= true;
-    /**
-     * Default selected attribute if exists
-     * @property defaultColorByAttribute
-     * @type {string}
-     * @default "Time Watched"
-     */
-    this.defaultColorByAttribute= "Times Watched";
-    /**
-     * Color scale for coloring by attribute
-     * @property colorByAttributeValues
-     * @type {object}
-     * @default "{min:{color:"white"},max:{color:"darkblue"}}"
-     */
-    this.colorByAttributeValues= {
-      min: {color: "white"},
-      max: {color: "darkblue"}
-    };
   };
 
   /**
