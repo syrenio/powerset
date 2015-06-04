@@ -49,6 +49,22 @@ Array.prototype.unique = function() {
 
     var controlPanel = $("#ps-control-panel");
 
+    //add change handler for powerset
+    $("#header-ds-selector").change(datasetChangeHandler);
+
+    /**
+     * Trigger clearing of selection
+     *
+     * @private
+     */
+    function datasetChangeHandler(evt){
+      while(selections.list.length > 0) {
+        selections.removeSelection(selections.list[0]);
+      }
+      selectedSets.forEach(function(d){d.active=false;});
+      that.draw();
+    }
+
     /**
      * get group rows from renderRows
      *
@@ -849,11 +865,8 @@ Array.prototype.unique = function() {
           var gtextY = (groupHeights[idx] / 2) + y;
           svg.selectAll(".pw-gtext-"+idx).transition().duration(300).attr({"y":gtextY});
           svg.selectAll(arr).transition().duration(300).attr({"y": y, "height":groupHeights[idx]});
-
         });
-
       });
-
     }
 
     /**
