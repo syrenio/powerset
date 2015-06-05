@@ -90,3 +90,39 @@ div.ps-control-panel{
 .ui-dialog .ui-dialog-titlebar{
 	font-size: 10px;
 }
+
+/* ----- progress begin ----- */
+progress,
+progress[role]
+{
+	appearance: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	border: none;
+	background-size: auto;
+}
+progress,
+progress[role][aria-valuenow] {
+	background: transparent !important;
+}
+progress::-webkit-progress-bar {
+	background: transparent;
+}
+progress {
+	color: #00319E;
+	opacity: .5;
+}
+progress::-moz-progress-bar {
+	background: #00319E;
+	opacity: .5;
+}
+progress::-webkit-progress-value {
+	background: #00319E;
+	opacity: .5;
+}
+progress[aria-valuenow]:before  {
+	background: #00319E;
+	opacity: .5;
+}
+
+/* ----- progress end ----- */
