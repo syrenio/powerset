@@ -49,6 +49,15 @@ Array.prototype.unique = function() {
 
     var controlPanel = $("#ps-control-panel");
 
+    //add None Attribute
+    var noneAttr = {
+      name: "None",
+      sort: 0,
+      type: "id",
+      values: attributes[0].values.slice()
+    };
+    attributes.push(noneAttr);
+
     //add change handler for powerset
     $("#header-ds-selector").change(datasetChangeHandler);
 
@@ -124,7 +133,7 @@ Array.prototype.unique = function() {
           list.push(attributes[i]);
         }
       }
-      return list;
+      return list.sort(function(a,b){return b.sort - a.sort;});
     }
 
     /**
