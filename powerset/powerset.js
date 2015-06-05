@@ -785,7 +785,7 @@ Array.prototype.unique = function() {
 
           var str = "<input type='checkbox' " + checked + " value='" + idx + "' class='chk-set-size' id='chk-set-size-" + idx + "' data-basesetid='" + d.id + "'>";
           str += "<span>" + d.elementName + "</span>";
-          var titleText = d.elementName + " - " + (d.setSize / counts.totalSize * 100).toFixed(3);
+          var titleText = d.elementName + " - " + d.setSize + " (" + (d.setSize / counts.totalSize * 100).toFixed(1) + " %)";
           str += "<progress title='" + titleText + "' value='" + (d.setSize / counts.overallSize * 100) + "' max='100'></progress>";
           return str;
         });
@@ -820,7 +820,7 @@ Array.prototype.unique = function() {
       var counts = getCountsForProgressbar(groupRows);
       controlPanel.find("#ps-control-panel-degree").remove();
       var degPanel = controlPanel.append("<div id='ps-control-panel-degree'></div>").find("#ps-control-panel-degree");
-      degPanel.append("<h3>Elements by Degree");
+      degPanel.append("<h3>Elements by degree");
       degPanel.append("<div class='elm-by-deg-scale'><span>0</span><span>" + counts.overallSize + "</span></div>");
       degPanel.append("<div id='elm-by-deg-rows'></div>");
 
@@ -835,7 +835,7 @@ Array.prototype.unique = function() {
 
             var str = "<input type='checkbox' " + checked + " value='" + idx + "' class='chk-set-degree'>";
             str += "<span>" + idx + "</span>";
-            var titleText = d.elementName + " - " + (d.setSize / counts.totalSize * 100).toFixed(3);
+            var titleText = d.elementName + " - " + d.setSize + " (" + (d.setSize / counts.totalSize * 100).toFixed(1) + " %)";
             str += "<progress title='" + titleText + "' value='" + (d.setSize / counts.overallSize * 100) + "' max='100'></progress>";
             return str;
           });
