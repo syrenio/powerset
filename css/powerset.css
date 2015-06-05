@@ -91,6 +91,15 @@ div.ps-control-panel{
 	font-size: 10px;
 }
 
+.control-panel-header{
+	width: 100px;
+	float: right;
+	margin: 5px;
+}
+.control-panel-rows{
+	clear: both;
+}
+
 /* ----- progress begin ----- */
 progress,
 progress[role]

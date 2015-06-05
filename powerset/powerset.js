@@ -766,10 +766,10 @@ Array.prototype.unique = function() {
       var setsPanel = controlPanel.append("<div id='ps-control-panel-sets'></div>").find("#ps-control-panel-sets");
       setsPanel.append("<h3>Sets by size");
 
-      setsPanel.append("<div class='elm-by-sets-scale'><span>0</span><span>" + counts.overallSize + "</span></div>");
-
-      setsPanel.append("<div id='elm-by-sets-rows'></div>");
+      setsPanel.append("<div class='elm-by-sets-scale control-panel-header'><span>0</span><span>" + counts.overallSize + "</span></div>");
+      setsPanel.append("<div id='elm-by-sets-rows' class='control-panel-rows'></div>");
       var rows = d3.select("#elm-by-sets-rows").selectAll("div.row").data(subsetRows);
+
       rows.enter()
         .append("div")
         .classed({
@@ -821,8 +821,8 @@ Array.prototype.unique = function() {
       controlPanel.find("#ps-control-panel-degree").remove();
       var degPanel = controlPanel.append("<div id='ps-control-panel-degree'></div>").find("#ps-control-panel-degree");
       degPanel.append("<h3>Elements by degree");
-      degPanel.append("<div class='elm-by-deg-scale'><span>0</span><span>" + counts.overallSize + "</span></div>");
-      degPanel.append("<div id='elm-by-deg-rows'></div>");
+      degPanel.append("<div class='elm-by-deg-scale control-panel-header'><span>0</span><span>" + counts.overallSize + "</span></div>");
+      degPanel.append("<div id='elm-by-deg-rows' class='control-panel-rows'></div>");
 
       var rows = d3.select("#elm-by-deg-rows").selectAll("div.row").data(groupRows);
       rows.enter()
