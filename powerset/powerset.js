@@ -905,16 +905,130 @@ Array.prototype.unique = function() {
     }
 
     /**
+     * create and show scale modal
+     *
+     * @private
+     * @param {string} attr
+     * @method showScaleModal
+     */
+    function showScaleModal(attr){
+      var modalIdSel = "#pw-scale-modal";
+      var modal = $(modalIdSel);
+      if(modal.length > 0){
+        modal.remove();
+      }
+      var bodyVis = $("#bodyVis");
+      bodyVis.append("<div id='pw-scale-modal'>");
+      bodyVis.css("position","relative");
+
+      drawModalScaleSvg(attr,200,500);
+
+      $(modalIdSel).attr("title","Color scale");
+      $(modalIdSel).dialog({
+        width: 500,
+        height: 200,
+        position: { my: "top", at: "top", of: window },
+        resizeStop: function(evt,ui){
+          drawModalScaleSvg(attr, ui.size.height.toFixed(0),ui.size.width.toFixed(0));
+        }
+      });
+    }
+
+    /**
+     * draw svg and axis for color scale
+     *
+     * @private
+     * @param {string} attr
+     * @param {integer} height
+     * @param {integer} width
+     * @method drawModalScaleSvg
+     */
+    function drawModalScaleSvg(attr, height, width){
+      //reduce a litte because of modal
+      height -= 50;
+      width -= 50;
+
+      var min = that.options.colorByAttributeValues.min;
+      var max = that.options.colorByAttributeValues.max;
+      var colorScale = d3.scale.linear().domain([attr.min,attr.max]).range([min.color,max.color]);
+      var axisScale = d3.scale.linear().domain([attr.min,attr.max]).range([0,width-10]);
+
+      d3.select("#pw-scale-modal svg").remove();
+      var modalSvg = d3.select("#pw-scale-modal").append("svg").attr("height",height).attr("width",width);
+
+
+      if(attr.type ==="integer" || attr.type === "float"){
+        var xAxis = d3.svg.axis().scale(axisScale);
+        var xAxisGroup = modalSvg.append("g")
+            .attr("transform", "translate(10,10)")
+            .call(xAxis);
+
+        var path = xAxisGroup.select("path");
+        path.style("fill", "url(#gradient)");
+
+        //create gradient
+        var gradient = modalSvg.append("svg:defs")
+            .append("svg:linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "0%")
+            .attr("spreadMethod", "pad");
+
+        gradient.append("svg:stop")
+            .attr("offset", "0%")
+            .attr("stop-color", colorScale(attr.min))
+            .attr("stop-opacity", 1);
+
+        gradient.append("svg:stop")
+            .attr("offset", "100%")
+            .attr("stop-color", colorScale(attr.max))
+            .attr("stop-opacity", 1);
+
+        /*
+        modalSvg.append("rect")
+            .attr("width", 200)
+            .attr("height", 50)
+            .style("fill", "url(#gradient)");
+        */
+      }else{
+        modalSvg.append("text")
+            .attr("x",20)
+            .attr("y",20)
+            .style({
+              "stroke":"block"
+            })
+            .text("no scale available!");
+      }
+    }
+
+
+
+    /**
+     * get selected attribute by colorByAttribute value
+     * if not found -> return first attribute in attributes
+     *
+     * @private
+     * @method getSelectedAttribute
+     * @return {object} attribute
+     */
+    function getSelectedAttribute(){
+      var attr = getAttributes().filter(function(d){ return d.name===that.colorByAttribute;})[0];
+      if(!attr){
+        attr = getAttributes()[0];
+      }
+      return attr;
+    }
+
+    /**
      * create style tag with css classes
      *
      * @private
      * @method createStyle
      */
     function createStyle() {
-      var attr = getAttributes().filter(function(d){ return d.name===that.colorByAttribute;})[0];
-      if(!attr){
-        attr = getAttributes()[0];
-      }
+      var attr = getSelectedAttribute();
 
       var pwStyle = $("#pw-style");
       if(pwStyle.length > 0){
@@ -965,12 +1079,17 @@ Array.prototype.unique = function() {
           builder.push("<option value='" + x.name + "' + selected='" + selected + "'>" + x.name + " </option>");
         }
         builder.push("</select>");
+        builder.push("<button id='attr-color-scale-button'>show color scale</button>");
         builder.push("</span>");
         $(".header-container").append(builder.join(""));
         var sel = $("#attr-select");
         sel.data("datasetid",queryParameters.dataset);
         sel.on("change",setColorByAttribute);
       }
+      d3.select("#attr-color-scale-button").on("click",function(){
+        var attr = getSelectedAttribute();
+        showScaleModal(attr)
+      });
     }
 
   };
