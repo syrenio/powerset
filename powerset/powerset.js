@@ -40,6 +40,7 @@ Array.prototype.unique = function() {
 
     var openSets = [];
     var selectedSets = [];
+    var selectedItems = [];
     
     that.options = $.extend({}, new PowersetOptions(), options);
 
@@ -568,6 +569,10 @@ Array.prototype.unique = function() {
           })
           .append("p")
           .on("click", function(d) {
+            selectedSets.forEach(function(itm){
+              itm.active = false;
+            });
+            selectedItems = d.items;
             createSelection(d.items);
           })
           .attr("class","pw-set-text-center")
@@ -578,7 +583,6 @@ Array.prototype.unique = function() {
             return d.elementName + " - " + d.setSize + " elements";
           });
       }
-
     }
 
     /**
@@ -691,11 +695,11 @@ Array.prototype.unique = function() {
      * @param {array} selIetms list of element ids
      * @method getSelectedItems
      */
-    function getSelectedItems(selItems){
+    function getSelectedItems(){
       var arrselsets = selectedSets.filter(function(d){
         return d.active;
       });
-      var arr = selItems || [];
+      var arr = selectedItems || [];
       arrselsets.forEach(function(d){
         arr = arr.concat(d.baseSet.items.filter(function(itm){
           return arr.indexOf(itm) < 0;
@@ -792,6 +796,7 @@ Array.prototype.unique = function() {
       rows.exit().remove();
 
       $("input.chk-set-size").on("change",function(){
+        selectedItems = [];
 
         var idx = $(this).val();
         var baseSetId = $(this).data("basesetid");
@@ -800,6 +805,7 @@ Array.prototype.unique = function() {
         selectedSets[idx].active = !selectedSets[idx].active;
         selectedSets[idx].baseSet = baseSet;
         that.draw();
+
 
         createSelection(getSelectedItems());
       });
