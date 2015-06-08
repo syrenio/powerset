@@ -388,7 +388,6 @@ Array.prototype.unique = function() {
         {
           return (b.setSize < a.setSize) ? -1 : 1;
         }
-        //return b.setSize - a.setSize || a.elementName - b.elementName;
       });
 
       if (that.options.showSubsetWithoutData) {
@@ -876,10 +875,18 @@ Array.prototype.unique = function() {
         groupHeights.forEach(function(itm,idx){
           console.log(idx,groupHeights[idx]);
           var y = getPrevHeight(idx);
-          var arr = [".pw-gset-"+idx, ".pw-set-sel-"+idx, ".pw-set-"+idx, ".pw-set-text-"+idx, ".pw-set-more-"+idx, ".pw-set-more-text-"+idx];
+          var isOpen = openSets[idx];
+          var arr = [".pw-set-sel-"+idx, ".pw-set-"+idx, ".pw-set-text-"+idx, ".pw-set-more-"+idx, ".pw-set-more-text-"+idx];
+          var gSel = ".pw-gset-"+idx;
           var gtextY = (groupHeights[idx] / 2) + y;
           svg.selectAll(".pw-gtext-"+idx).transition().duration(300).attr({"y":gtextY});
-          svg.selectAll(arr).transition().duration(300).attr({"y": y, "height":groupHeights[idx]});
+          svg.selectAll(arr).transition().duration(300).attr({"y": y, "height":groupHeights[idx]}).style({"opacity": isOpen ? 1 : 0});
+          if(isOpen){
+            svg.select(gSel).transition().duration(300).attr({"y": y, "height":groupHeights[idx]}).style({"fill":"","stroke":"","stroke-opacity":""});
+          }else{
+            svg.select(gSel).transition().duration(300).attr({"y": y, "height":groupHeights[idx]}).style({"fill":"rgb(222, 222, 222)","stroke":"black","stroke-opacity":0.1});
+          }
+
         });
       });
     }
