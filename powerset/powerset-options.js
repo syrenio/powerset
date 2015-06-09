@@ -49,7 +49,7 @@
          * @type {integer}
          * @default 5
          */
-        this.minimalSetHeight= 5;
+        this.minimalSetHeight= 15;
         /**
          * Minimal width of a set
          * @property minimalSetWidth

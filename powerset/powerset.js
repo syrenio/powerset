@@ -236,6 +236,20 @@ Array.prototype.unique = function() {
       /* init loop */
       var groupHeights = calcGroupHeights(groupRows, svgHeight);
 
+      function calcY(d,idx){
+        var prevHeights = groupHeights.filter(function (x, i) {
+          return i < idx;
+        });
+        var prevHeight = 0;
+        if (prevHeights.length > 0) {
+          prevHeight = prevHeights.reduce(function (r, x) {
+            return r + x;
+          });
+        }
+        prevHeight += (that.options.groupSetPadding * idx);
+        return prevHeight;
+      }
+
       // TODO: insert <g>
       svg.selectAll("rect.pw-gset").remove();
       var groupRects = svg.selectAll("rect.pw-gset").data(groupRows);
@@ -245,19 +259,7 @@ Array.prototype.unique = function() {
             return "pw-gset pw-gset-" + idx;
           })
           .attr("x", 20)
-          .attr("y", function (d, idx) {
-            var prevHeights = groupHeights.filter(function (x, i) {
-              return i < idx;
-            });
-            var prevHeight = 0;
-            if (prevHeights.length > 0) {
-              prevHeight = prevHeights.reduce(function (r, x) {
-                return r + x;
-              });
-            }
-            prevHeight += (that.options.groupSetPadding * idx);
-            return prevHeight;
-          })
+          .attr("y", calcY)
           .attr("width", rectsWidth)
           .attr("height", function (d, idx) {
             return groupHeights[idx];
@@ -289,6 +291,40 @@ Array.prototype.unique = function() {
             return (val / 2) + prevHeight;
           });
       gTexts.exit().remove();
+
+      //draw foreign element for text in groups
+
+      //workaround foreignObjects
+      svg.selectAll(".pw-gset-inner-text").remove();
+      var subSetTexts = svg.selectAll("foreignObject.pw-gset-inner-text").data(groupRows).enter();
+      subSetTexts.append("foreignObject")
+          .attr("class", function(d,idx){ return "pw-gset-inner-text pw-gset-inner-text-" + idx;})
+          .attr("class", function(d,idx){ return "pw-gset-inner-text pw-gset-inner-text-" + idx;})
+          .attr("x", 20)
+          .attr("y", calcY)
+          .attr("height",function (d, idx) {
+            return groupHeights[idx];
+          })
+          .attr("width", rectsWidth)
+          .attr("text-anchor", "middle")
+          .attr("alignment-baseline", "middle")
+          .style({"visibility":"hidden"})
+          .append("xhtml:body")
+          .attr("class","pw-set-text-body")
+          .style({
+            "width": rectsWidth + "px"
+          })
+          .append("p")
+          .on("click", function(d,idx) {
+            $("input.chk-set-degree[value="+idx+"]").change();
+          })
+          .attr("class","pw-set-text-center")
+          .html(function(d) {
+            return "+";
+          })
+          .attr("title", function(d) {
+            return d.data.setSize + " elements";
+          });
 
       drawSubsets(svg, groupRects, rectsWidth);
       drawSetsBySize();
@@ -877,14 +913,14 @@ Array.prototype.unique = function() {
           var y = getPrevHeight(idx);
           var isOpen = openSets[idx];
           var arr = [".pw-set-sel-"+idx, ".pw-set-"+idx, ".pw-set-text-"+idx, ".pw-set-more-"+idx, ".pw-set-more-text-"+idx];
-          var gSel = ".pw-gset-"+idx;
+          var gSel = [".pw-gset-"+idx, ".pw-gset-inner-text-"+idx];
           var gtextY = (groupHeights[idx] / 2) + y;
           svg.selectAll(".pw-gtext-"+idx).transition().duration(300).attr({"y":gtextY});
-          svg.selectAll(arr).transition().duration(300).attr({"y": y, "height":groupHeights[idx]}).style({"opacity": isOpen ? 1 : 0});
+          svg.selectAll(arr).transition().duration(300).attr({"y": y, "height":groupHeights[idx]}).style({"opacity": isOpen ? 1 : 0, "display": isOpen ? "" : "none"});
           if(isOpen){
-            svg.select(gSel).transition().duration(300).attr({"y": y, "height":groupHeights[idx]}).style({"fill":"","stroke":"","stroke-opacity":""});
+            svg.selectAll(gSel).transition().duration(300).attr({"y": y, "height":groupHeights[idx]}).style({"fill":"","stroke":"","stroke-opacity":"", "visibility":"hidden"});
           }else{
-            svg.select(gSel).transition().duration(300).attr({"y": y, "height":groupHeights[idx]}).style({"fill":"rgb(222, 222, 222)","stroke":"black","stroke-opacity":0.1});
+            svg.selectAll(gSel).transition().duration(300).attr({"y": y, "height":groupHeights[idx]}).style({"fill":"rgb(222, 222, 222)","stroke":"black","stroke-opacity":0.1, "visibility":"visible"});
           }
 
         });
